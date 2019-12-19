@@ -1,10 +1,10 @@
 package id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,9 +28,9 @@ public class MenuActivity extends AppCompatActivity {
 
         checkPermission();
 
-        // Example of a call to a native method
-        TextView tv = findViewById(R.id.sample_text);
-        tv.setText(stringFromJNI());
+        Intent intent = new Intent(this, MusicDetailActivity.class);
+        startActivity(intent);
+        finish();
 
     }
 
