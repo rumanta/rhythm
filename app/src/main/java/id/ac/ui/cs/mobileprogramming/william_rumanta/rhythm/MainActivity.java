@@ -12,7 +12,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent intent = new Intent(this, MenuActivity.class);
+        Intent intent = new Intent(this, MusicDetailActivity.class);
         startActivity(intent);
         finish();
     }

@@ -22,6 +22,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".MenuActivity"></activity>
+        <activity android:name=".MusicMenuActivity"></activity>
+        <activity android:name=".MusicDetailActivity"></activity>
+        <activity android:name=".HomeMenuActivity"></activity>
         <service android:name=".services.MediaPlayerService"/>
     </application>
 
