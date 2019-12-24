@@ -13,7 +13,7 @@ import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.models.Audio;
 
 public class StorageUtil {
 
-    private final String STORAGE = " com.valdioveliu.valdio.audioplayer.STORAGE";
+    private final String STORAGE = "id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.STORAGE";
     private SharedPreferences preferences;
     private Context context;
 
