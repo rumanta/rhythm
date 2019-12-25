@@ -1,6 +1,7 @@
 package id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.services;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -24,6 +25,7 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import android.media.session.MediaSessionManager;
+import androidx.core.content.ContextCompat;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,6 +47,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
     private MediaPlayer mediaPlayer;
 
+    private NotificationManager notificationManager;
+
     //MediaSession
     private MediaSessionManager mediaSessionManager;
     private MediaSessionCompat mediaSession;
@@ -52,6 +56,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
     //AudioPlayer notification ID
     private static final int NOTIFICATION_ID = 101;
+    String CHANNEL_ID = "id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm";
 
     private AudioManager audioManager;
 
@@ -73,6 +78,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     private boolean ongoingCall = false;
     private PhoneStateListener phoneStateListener;
     private TelephonyManager telephonyManager;
+
+    protected void createNotificationChannel(String id, String name,  NotificationManager notificationManager) {
+        int importance = NotificationManager.IMPORTANCE_HIGH;
+        NotificationChannel channel =
+                new NotificationChannel(id, name, importance);
+
+        notificationManager.createNotificationChannel(channel);
+    }
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -512,7 +525,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
     private void updateMetaData() {
         Bitmap albumArt = BitmapFactory.decodeResource(getResources(),
-                R.drawable.imageiu); //replace with medias albumArt
+                R.drawable.imageiu3); //replace with medias albumArt
         // Update the current metadata
         mediaSession.setMetadata(new MediaMetadataCompat.Builder()
                 .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, albumArt)
@@ -532,6 +545,12 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
     private void buildNotification(PlaybackStatus playbackStatus) {
 
+        if (notificationManager == null) {
+            notificationManager =  (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        }
+
+        createNotificationChannel(CHANNEL_ID, "rhythm", notificationManager);
+
         int notificationAction = android.R.drawable.ic_media_pause;//needs to be initialized
         PendingIntent play_pauseAction = null;
 
@@ -550,7 +569,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 R.drawable.imageiu); //replace with your own image
 
         // Create a new Notification
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setShowWhen(false)
                 // Set the Notification style
                 .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
@@ -559,7 +578,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                         // Show our playback controls in the compact notification view.
                         .setShowActionsInCompactView(0, 1, 2))
                 // Set the Notification color
-                .setColor(getResources().getColor(R.color.colorPrimary))
+                .setColor(ContextCompat.getColor(this, R.color.colorPrimary))
                 // Set the large and small icons
                 .setLargeIcon(largeIcon)
                 .setSmallIcon(android.R.drawable.stat_sys_headset)
@@ -572,7 +591,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 .addAction(notificationAction, "pause", play_pauseAction)
                 .addAction(android.R.drawable.ic_media_next, "next", playbackAction(2));
 
-        ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notificationBuilder.build());
+        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
     }
 
     private PendingIntent playbackAction(int actionNumber) {
