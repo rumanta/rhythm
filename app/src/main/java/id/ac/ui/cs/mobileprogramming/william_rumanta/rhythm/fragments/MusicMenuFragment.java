@@ -1,5 +1,6 @@
-package id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm;
+package id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.fragments;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -13,21 +14,23 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.Manifest;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -38,14 +41,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.CustomTouchListener;
+import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.R;
 import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.adapter.MusicListAdapter;
 import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.models.Audio;
+import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.onItemClickListener;
 import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.services.MediaPlayerService;
 import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.services.StorageUtil;
 
 import static android.os.Build.VERSION.SDK_INT;
 
-public class MusicMenuActivity extends AppCompatActivity {
+public class MusicMenuFragment extends Fragment {
 
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
     private static final String permission_explaination = "Dear beloved users,\n\n1. Phone state permission:\nDibutuhkan untuk melakukan pause ketika device sedang menerima call\n\n" +
@@ -61,12 +67,12 @@ public class MusicMenuActivity extends AppCompatActivity {
     int imageIndex = 0;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        collapsingImageView = (ImageView) findViewById(R.id.collapsingImageView);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        Toolbar toolbar = (Toolbar) getView().findViewById(R.id.toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        collapsingImageView = (ImageView) getView().findViewById(R.id.collapsingImageView);
 
         loadCollapsingImage(imageIndex);
 
@@ -74,7 +80,7 @@ public class MusicMenuActivity extends AppCompatActivity {
             loadAudioList();
         }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) getView().findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -86,6 +92,8 @@ public class MusicMenuActivity extends AppCompatActivity {
                 }
             }
         });
+
+        return inflater.inflate(R.layout.activity_main, container, false);
     }
 
     private void loadAudioList() {
@@ -95,8 +103,8 @@ public class MusicMenuActivity extends AppCompatActivity {
 
     private boolean checkAndRequestPermissions() {
         if (SDK_INT >= Build.VERSION_CODES.M) {
-            int permissionReadPhoneState = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
-            int permissionStorage = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+            int permissionReadPhoneState = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_PHONE_STATE);
+            int permissionStorage = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE);
             List<String> listPermissionsNeeded = new ArrayList<>();
 
             if (permissionReadPhoneState != PackageManager.PERMISSION_GRANTED) {
@@ -108,7 +116,7 @@ public class MusicMenuActivity extends AppCompatActivity {
             }
 
             if (!listPermissionsNeeded.isEmpty()) {
-                ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
+                ActivityCompat.requestPermissions(getActivity(), listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
                 return false;
             } else {
                 return true;
@@ -148,8 +156,8 @@ public class MusicMenuActivity extends AppCompatActivity {
                         //permission is denied (this is the first time, when "never ask again" is not checked) so ask again explaining the usage of permission
 //                      //shouldShowRequestPermissionRationale will return true
                         //show the dialog or snackbar saying its necessary and try again otherwise proceed with setup.
-                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE) ||
-                                ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)) {
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) ||
+                                ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.READ_PHONE_STATE)) {
                             showDialogOK(permission_explaination,
                                     new DialogInterface.OnClickListener() {
                                         @Override
@@ -168,7 +176,7 @@ public class MusicMenuActivity extends AppCompatActivity {
                         //permission is denied (and never ask again is  checked)
                         //shouldShowRequestPermissionRationale will return false
                         else {
-                            Toast.makeText(this, "Go to settings and enable permissions", Toast.LENGTH_LONG)
+                            Toast.makeText(getActivity(), "Go to settings and enable permissions", Toast.LENGTH_LONG)
                                     .show();
                             //proceed with logic by disabling the related features or quit the app.
                         }
@@ -180,7 +188,7 @@ public class MusicMenuActivity extends AppCompatActivity {
     }
 
     private void showDialogOK(String message, DialogInterface.OnClickListener okListener) {
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(getActivity())
                 .setMessage(message)
                 .setPositiveButton("OK", okListener)
                 .setNegativeButton("Cancel", okListener)
@@ -191,11 +199,11 @@ public class MusicMenuActivity extends AppCompatActivity {
 
     private void initRecyclerView() {
         if (audioList != null && audioList.size() > 0) {
-            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-            MusicListAdapter adapter = new MusicListAdapter(audioList, getApplication());
+            RecyclerView recyclerView = (RecyclerView) getView().findViewById(R.id.recyclerview);
+            MusicListAdapter adapter = new MusicListAdapter(audioList, getActivity().getApplication());
             recyclerView.setAdapter(adapter);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recyclerView.addOnItemTouchListener(new CustomTouchListener(this, new onItemClickListener() {
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            recyclerView.addOnItemTouchListener(new CustomTouchListener(getActivity(), new onItemClickListener() {
                 @Override
                 public void onClick(View view, int index) {
                     playAudio(index);
@@ -210,10 +218,9 @@ public class MusicMenuActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -233,15 +240,18 @@ public class MusicMenuActivity extends AppCompatActivity {
 
 
     @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         outState.putBoolean("serviceStatus", serviceBound);
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        serviceBound = savedInstanceState.getBoolean("serviceStatus");
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            serviceBound = savedInstanceState.getBoolean("serviceStatus");
+        }
     }
 
     //Binding this Client to the AudioPlayer Service
@@ -265,22 +275,22 @@ public class MusicMenuActivity extends AppCompatActivity {
         //Check is service is active
         if (!serviceBound) {
             //Store Serializable audioList to SharedPreferences
-            StorageUtil storage = new StorageUtil(getApplicationContext());
+            StorageUtil storage = new StorageUtil(getActivity().getApplicationContext());
             storage.storeAudio(audioList);
             storage.storeAudioIndex(audioIndex);
 
-            Intent playerIntent = new Intent(this, MediaPlayerService.class);
-            startService(playerIntent);
-            bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+            Intent playerIntent = new Intent(getActivity(), MediaPlayerService.class);
+            getActivity().startService(playerIntent);
+            getActivity().bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
         } else {
             //Store the new audioIndex to SharedPreferences
-            StorageUtil storage = new StorageUtil(getApplicationContext());
+            StorageUtil storage = new StorageUtil(getActivity().getApplicationContext());
             storage.storeAudioIndex(audioIndex);
 
             //Service is active
             //Send a broadcast to the service -> PLAY_NEW_AUDIO
             Intent broadcastIntent = new Intent(Broadcast_PLAY_NEW_AUDIO);
-            sendBroadcast(broadcastIntent);
+            getActivity().sendBroadcast(broadcastIntent);
         }
     }
 
@@ -290,7 +300,7 @@ public class MusicMenuActivity extends AppCompatActivity {
      * If this don't works for you, load the audio files to audioList Array your oun way
      */
     private void loadAudio() {
-        ContentResolver contentResolver = getContentResolver();
+        ContentResolver contentResolver = getActivity().getContentResolver();
 
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
@@ -316,10 +326,10 @@ public class MusicMenuActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         if (serviceBound) {
-            unbindService(serviceConnection);
+            getActivity().unbindService(serviceConnection);
             //service is active
             player.stopSelf();
         }

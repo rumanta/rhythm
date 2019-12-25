@@ -30,7 +30,6 @@ import androidx.core.content.ContextCompat;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.MusicDetailActivity;
 import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.MusicMenuActivity;
 import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.R;
 import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.models.Audio;
@@ -40,11 +39,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener,
         AudioManager.OnAudioFocusChangeListener {
 
-    public static final String ACTION_PLAY = "com.valdioveliu.valdio.audioplayer.ACTION_PLAY";
-    public static final String ACTION_PAUSE = "com.valdioveliu.valdio.audioplayer.ACTION_PAUSE";
-    public static final String ACTION_PREVIOUS = "com.valdioveliu.valdio.audioplayer.ACTION_PREVIOUS";
-    public static final String ACTION_NEXT = "com.valdioveliu.valdio.audioplayer.ACTION_NEXT";
-    public static final String ACTION_STOP = "com.valdioveliu.valdio.audioplayer.ACTION_STOP";
+    public static final String ACTION_PLAY = "id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.ACTION_PLAY";
+    public static final String ACTION_PAUSE = "id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.ACTION_PAUSE";
+    public static final String ACTION_PREVIOUS = "id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.ACTION_PREVIOUS";
+    public static final String ACTION_NEXT = "id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.ACTION_NEXT";
+    public static final String ACTION_STOP = "id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.ACTION_STOP";
 
     private MediaPlayer mediaPlayer;
 
