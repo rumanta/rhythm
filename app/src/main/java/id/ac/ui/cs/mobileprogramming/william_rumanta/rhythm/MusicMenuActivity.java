@@ -48,6 +48,9 @@ import static android.os.Build.VERSION.SDK_INT;
 public class MusicMenuActivity extends AppCompatActivity {
 
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
+    private int count = 0;
+    private static final String permission_explaination = "Dear beloved users,\n\n1. Phone state permission:\nDibutuhkan untuk melakukan pause ketika device sedang menerima call\n\n" +
+            "2. Storage permission:\nDibutuhkan untuk mengakses file music pada local storage device";
     public static final String Broadcast_PLAY_NEW_AUDIO = "id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.PlayNewAudio";
 
     private MediaPlayerService player;
@@ -148,7 +151,7 @@ public class MusicMenuActivity extends AppCompatActivity {
                         //show the dialog or snackbar saying its necessary and try again otherwise proceed with setup.
                         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE) ||
                                 ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)) {
-                            showDialogOK("Phone state and storage permissions required for this app",
+                            showDialogOK(permission_explaination,
                                     new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
