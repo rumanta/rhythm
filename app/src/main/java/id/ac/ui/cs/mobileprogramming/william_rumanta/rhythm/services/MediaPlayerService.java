@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.MusicDetailActivity;
+import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.MusicMenuActivity;
 import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.R;
 import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.models.Audio;
 
@@ -670,7 +671,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
     private void register_playNewAudio() {
         //Register playNewMedia receiver
-        IntentFilter filter = new IntentFilter(MusicDetailActivity.Broadcast_PLAY_NEW_AUDIO);
+        IntentFilter filter = new IntentFilter(MusicMenuActivity.Broadcast_PLAY_NEW_AUDIO);
         registerReceiver(playNewAudio, filter);
     }
 }

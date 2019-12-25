@@ -40,7 +40,7 @@ import java.util.Map;
 
 import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.adapter.MusicListAdapter;
 import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.models.Audio;
-import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.services.MediaPlayerServiceDua;
+import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.services.MediaPlayerService;
 import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.services.StorageUtil;
 
 import static android.os.Build.VERSION.SDK_INT;
@@ -48,9 +48,9 @@ import static android.os.Build.VERSION.SDK_INT;
 public class MusicMenuActivity extends AppCompatActivity {
 
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
-    public static final String Broadcast_PLAY_NEW_AUDIO = "com.valdioveliu.valdio.audioplayer.PlayNewAudio";
+    public static final String Broadcast_PLAY_NEW_AUDIO = "id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.PlayNewAudio";
 
-    private MediaPlayerServiceDua player;
+    private MediaPlayerService player;
     boolean serviceBound = false;
     ArrayList<Audio> audioList;
 
@@ -76,9 +76,6 @@ public class MusicMenuActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                playAudio("https://upload.wikimedia.org/wikipedia/commons/6/6c/Grieg_Lyric_Pieces_Kobold.ogg");
-                //play the first audio in the ArrayList
-//                playAudio(2);
                 if (imageIndex == 4) {
                     imageIndex = 0;
                     loadCollapsingImage(imageIndex);
@@ -250,7 +247,7 @@ public class MusicMenuActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
-            MediaPlayerServiceDua.LocalBinder binder = (MediaPlayerServiceDua.LocalBinder) service;
+            MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
             player = binder.getService();
             serviceBound = true;
         }
@@ -270,7 +267,7 @@ public class MusicMenuActivity extends AppCompatActivity {
             storage.storeAudio(audioList);
             storage.storeAudioIndex(audioIndex);
 
-            Intent playerIntent = new Intent(this, MediaPlayerServiceDua.class);
+            Intent playerIntent = new Intent(this, MediaPlayerService.class);
             startService(playerIntent);
             bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
         } else {
