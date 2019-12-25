@@ -48,7 +48,6 @@ import static android.os.Build.VERSION.SDK_INT;
 public class MusicMenuActivity extends AppCompatActivity {
 
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
-    private int count = 0;
     private static final String permission_explaination = "Dear beloved users,\n\n1. Phone state permission:\nDibutuhkan untuk melakukan pause ketika device sedang menerima call\n\n" +
             "2. Storage permission:\nDibutuhkan untuk mengakses file music pada local storage device";
     public static final String Broadcast_PLAY_NEW_AUDIO = "id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.PlayNewAudio";
@@ -64,7 +63,7 @@ public class MusicMenuActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.fragment_music_menu);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         collapsingImageView = (ImageView) findViewById(R.id.collapsingImageView);
