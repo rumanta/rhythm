@@ -25,6 +25,8 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import android.media.session.MediaSessionManager;
+import android.widget.Toast;
+
 import androidx.core.content.ContextCompat;
 
 import java.io.IOException;
@@ -328,8 +330,13 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     }
 
     private void playMedia() {
-        if (!mediaPlayer.isPlaying()) {
-            mediaPlayer.start();
+        if (!Connectivity.isConnectedToInternet()) {
+            Toast.makeText(getApplicationContext(), "Please connect to internet to listen to music", Toast.LENGTH_LONG)
+                    .show();
+        } else {
+            if (!mediaPlayer.isPlaying()) {
+                mediaPlayer.start();
+            }
         }
     }
 
@@ -546,7 +553,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     private void buildNotification(PlaybackStatus playbackStatus) {
 
         if (notificationManager == null) {
-            notificationManager =  (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         }
 
         createNotificationChannel(CHANNEL_ID, "rhythm", notificationManager);
@@ -591,7 +598,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 .addAction(notificationAction, "pause", play_pauseAction)
                 .addAction(android.R.drawable.ic_media_next, "next", playbackAction(2));
 
-        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+        if (Connectivity.isConnectedToInternet()) {
+            notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+        }
     }
 
     private PendingIntent playbackAction(int actionNumber) {
@@ -669,7 +678,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     };
 
     private void register_playNewAudio() {
-        //Register playNewMedia receiver
+//        Register playNewMedia receiver
         IntentFilter filter = new IntentFilter(MusicMenuActivity.Broadcast_PLAY_NEW_AUDIO);
         registerReceiver(playNewAudio, filter);
     }

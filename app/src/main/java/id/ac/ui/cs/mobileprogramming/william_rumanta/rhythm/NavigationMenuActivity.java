@@ -17,11 +17,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -30,9 +25,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.fragments.Home.HomeFragment;
+import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.fragments.HomeMenuFragment;
 import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.fragments.MusicMenuFragment;
 import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.fragments.Notification.NotificationsFragment;
+import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.services.Connectivity;
 
 import static android.os.Build.VERSION.SDK_INT;
 
@@ -48,7 +44,7 @@ public class NavigationMenuActivity extends AppCompatActivity {
             "2. Storage permission:\nDibutuhkan untuk mengakses file music pada local storage device";
 
     final FragmentManager fm = getSupportFragmentManager();
-    final Fragment homeFragment = new HomeFragment();
+    final Fragment homeFragment = new HomeMenuFragment();
     final Fragment musicMenuFragment = new MusicMenuFragment();
     final Fragment notificationFragment = new NotificationsFragment();
 
@@ -67,6 +63,10 @@ public class NavigationMenuActivity extends AppCompatActivity {
         BottomNavigationView navView = findViewById(R.id.navigation);
 
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        // Add Connectivity Listener
+        Connectivity connectivity = new Connectivity(this);
+
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
