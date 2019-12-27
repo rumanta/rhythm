@@ -31,9 +31,11 @@ import androidx.core.content.ContextCompat;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
-import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.MusicMenuActivity;
+import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.ObserverMedia;
 import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.R;
+import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.fragments.MusicMenuFragment;
 import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.models.Audio;
 
 public class MediaPlayerService extends Service implements MediaPlayer.OnCompletionListener,
@@ -47,7 +49,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     public static final String ACTION_NEXT = "id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.ACTION_NEXT";
     public static final String ACTION_STOP = "id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.ACTION_STOP";
 
-    private MediaPlayer mediaPlayer;
+    private static MediaPlayer mediaPlayer;
 
     private NotificationManager notificationManager;
 
@@ -80,6 +82,21 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     private boolean ongoingCall = false;
     private PhoneStateListener phoneStateListener;
     private TelephonyManager telephonyManager;
+
+    public static MediaPlayer getMediaPlayer() {
+        return mediaPlayer;
+    }
+
+    private static List<ObserverMedia> listeners = new ArrayList<ObserverMedia>();
+
+    public static void addListener(ObserverMedia listener) {
+        listeners.add(listener);
+    }
+    void notifyMediaPlaying(){
+        for(ObserverMedia listener : listeners){
+            listener.onPlayMedia();
+        }
+    }
 
     protected void createNotificationChannel(String id, String name,  NotificationManager notificationManager) {
         int importance = NotificationManager.IMPORTANCE_HIGH;
@@ -336,6 +353,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         } else {
             if (!mediaPlayer.isPlaying()) {
                 mediaPlayer.start();
+
+                notifyMediaPlaying();
             }
         }
     }
@@ -679,7 +698,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
     private void register_playNewAudio() {
 //        Register playNewMedia receiver
-        IntentFilter filter = new IntentFilter(MusicMenuActivity.Broadcast_PLAY_NEW_AUDIO);
+        IntentFilter filter = new IntentFilter(MusicMenuFragment.Broadcast_PLAY_NEW_AUDIO);
         registerReceiver(playNewAudio, filter);
     }
 }

@@ -27,7 +27,7 @@ import java.util.Map;
 
 import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.fragments.HomeMenuFragment;
 import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.fragments.MusicMenuFragment;
-import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.fragments.Notification.NotificationsFragment;
+import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.visualizer.VisualizerMenuFragment;
 import id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.services.Connectivity;
 
 import static android.os.Build.VERSION.SDK_INT;
@@ -40,13 +40,11 @@ public class NavigationMenuActivity extends AppCompatActivity {
     }
 
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
-    private static final String permission_explaination = "Dear beloved users,\n\n1. Phone state permission:\nDibutuhkan untuk melakukan pause ketika device sedang menerima call\n\n" +
-            "2. Storage permission:\nDibutuhkan untuk mengakses file music pada local storage device";
 
     final FragmentManager fm = getSupportFragmentManager();
     final Fragment homeFragment = new HomeMenuFragment();
     final Fragment musicMenuFragment = new MusicMenuFragment();
-    final Fragment notificationFragment = new NotificationsFragment();
+    final Fragment visualizerMenuFragment = new VisualizerMenuFragment();
 
     Fragment active = homeFragment;
 
@@ -66,7 +64,6 @@ public class NavigationMenuActivity extends AppCompatActivity {
 
         // Add Connectivity Listener
         Connectivity connectivity = new Connectivity(this);
-
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -86,8 +83,8 @@ public class NavigationMenuActivity extends AppCompatActivity {
                     return true;
 
                 case R.id.navigation_visualizer:
-                    fm.beginTransaction().hide(active).show(notificationFragment).commit();
-                    active = notificationFragment;
+                    fm.beginTransaction().hide(active).show(visualizerMenuFragment).commit();
+                    active = visualizerMenuFragment;
                     return true;
             }
             return false;
@@ -98,6 +95,8 @@ public class NavigationMenuActivity extends AppCompatActivity {
         if (SDK_INT >= Build.VERSION_CODES.M) {
             int permissionReadPhoneState = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE);
             int permissionStorage = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE);
+            int permissionRecordAudio = ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO);
+
             List<String> listPermissionsNeeded = new ArrayList<>();
 
             if (permissionReadPhoneState != PackageManager.PERMISSION_GRANTED) {
@@ -108,11 +107,15 @@ public class NavigationMenuActivity extends AppCompatActivity {
                 listPermissionsNeeded.add(android.Manifest.permission.READ_EXTERNAL_STORAGE);
             }
 
+            if (permissionRecordAudio != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.RECORD_AUDIO);
+            }
+
             if (!listPermissionsNeeded.isEmpty()) {
                 ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
                 return false;
             } else {
-                fm.beginTransaction().add(R.id.main_container, notificationFragment, "3").hide(notificationFragment).commit();
+                fm.beginTransaction().add(R.id.main_container, visualizerMenuFragment, "3").hide(visualizerMenuFragment).commit();
                 fm.beginTransaction().add(R.id.main_container, musicMenuFragment, "2").hide(musicMenuFragment).commit();
                 fm.beginTransaction().add(R.id.main_container,homeFragment, "1").commit();
                 return true;
@@ -141,10 +144,11 @@ public class NavigationMenuActivity extends AppCompatActivity {
 
                     if (perms.get(android.Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
                             && perms.get(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
                     ) {
-                        Log.d(TAG, "Phone state and storage permissions granted");
+                        Log.d(TAG, "Phone state, storage permissions and record audio granted");
                         // process the normal flow
-                        fm.beginTransaction().add(R.id.main_container, notificationFragment, "3").hide(notificationFragment).commit();
+                        fm.beginTransaction().add(R.id.main_container, visualizerMenuFragment, "3").hide(visualizerMenuFragment).commit();
                         fm.beginTransaction().add(R.id.main_container, musicMenuFragment, "2").hide(musicMenuFragment).commit();
                         fm.beginTransaction().add(R.id.main_container,homeFragment, "1").commit();
                         //else any one or both the permissions are not granted
@@ -155,7 +159,7 @@ public class NavigationMenuActivity extends AppCompatActivity {
                         //show the dialog or snackbar saying its necessary and try again otherwise proceed with setup.
                         if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) ||
                                 ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)) {
-                            showDialogOK(permission_explaination,
+                            showDialogOK(getExplanationPermission(),
                                     new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
@@ -197,5 +201,5 @@ public class NavigationMenuActivity extends AppCompatActivity {
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
      */
-    public native String stringFromJNI();
+    public native String getExplanationPermission();
 }

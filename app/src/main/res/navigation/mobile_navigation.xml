@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/navigation_visualizer"
-        android:name="id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.fragments.Notification.NotificationsFragment"
+        android:name="id.ac.ui.cs.mobileprogramming.william_rumanta.rhythm.visualizer.VisualizerMenuFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
 </navigation>

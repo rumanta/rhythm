@@ -197,6 +197,8 @@ public class MusicMenuFragment extends Fragment {
             Intent broadcastIntent = new Intent(Broadcast_PLAY_NEW_AUDIO);
             getActivity().sendBroadcast(broadcastIntent);
         }
+
+        System.out.println("-------------MEDIA PLAYERR----" + MediaPlayerService.getMediaPlayer());
     }
 
     /**
